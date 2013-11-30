@@ -42,7 +42,7 @@ def setup_parser_args(parser, subparsers):
 
 def setup_parser_init(subparsers):
     """Setup the init command parser"""
-    parser_init = subparsers.add_parser('init', help='Add dotfile for management')
+    parser_init = subparsers.add_parser('init', help='Initialize sym configuration')
     parser_init.set_defaults(func = init)
 
 
