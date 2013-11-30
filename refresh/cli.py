@@ -26,21 +26,10 @@
 import argparse
 import sys
 
-
-def init(args):
-    print('init')
-
-
-def add(args):
-    print('add')
-
-
-def remove(args):
-    print('remove')
-
-
-def verify(args):
-    print('verify')
+from api import add
+from api import init
+from api import remove
+from api import verify
 
 
 def setup_parser_args(parser, subparsers):
