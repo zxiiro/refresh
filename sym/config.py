@@ -26,7 +26,7 @@ import yaml
 
 
 class ConfigYAML(yaml.YAMLObject):
-    yaml_tag = u'!RefreshConfig'
+    yaml_tag = u'!SymConfig'
 
     def __init__(self):
         self.symlinks = {}

@@ -27,7 +27,7 @@ import tempfile
 import unittest
 import yaml
 
-from refresh.config import ConfigYAML
+from sym.config import ConfigYAML
 
 
 class TestConfig(unittest.TestCase):

@@ -69,7 +69,7 @@ def setup_parser_verify(subparsers):
 
 def parse_args():
     """Initialize the Argument Parser"""
-    parser = argparse.ArgumentParser(description='Refresh, dotfiles management tool')
+    parser = argparse.ArgumentParser(description='Sym, dotfiles and configuration management tool')
     subparsers = parser.add_subparsers(help='Command List')
     setup_parser_args(parser, subparsers)
     args = parser.parse_args()

@@ -26,7 +26,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-setup(name='Refresh',
+setup(name='Sym',
       version='0.0.1',
       author='Thanh Ha',
       author_email='thanh.ha@alumni.carleton.ca',
@@ -47,5 +47,5 @@ setup(name='Refresh',
           'tests.*',
           'tests'
           ]),
-      test_suite='refresh.tests'
+      test_suite='sym.tests'
       )
