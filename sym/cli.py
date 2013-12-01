@@ -26,10 +26,10 @@
 import argparse
 import sys
 
-from api import add
-from api import init
-from api import remove
-from api import verify
+from sym.api import add
+from sym.api import init
+from sym.api import remove
+from sym.api import verify
 
 
 def setup_parser_args(parser, subparsers):
