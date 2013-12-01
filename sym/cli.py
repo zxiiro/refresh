@@ -68,20 +68,19 @@ def setup_parser_verify(subparsers):
     parser_verify.set_defaults(func=verify)
 
 
-def parse_args():
+def setup_parser():
     """Initialize the Argument Parser"""
     parser = argparse.ArgumentParser(description='Sym, dotfiles and configuration management tool')
     subparsers = parser.add_subparsers(help='Command List')
     setup_parser_args(parser, subparsers)
-    args = parser.parse_args()
+    return parser
 
-    code, msg = args.func(args)
+
+def parse_args(parser, parse_args=None, homedir=None):
+    args = parser.parse_args(parse_args)
+
+    if homedir:
+        code, msg = args.func(args, homedir=homedir)
+    else:
+        code, msg = args.func(args)
     print(msg)
-
-
-def main():
-    parse_args()
-
-
-if __name__ == '__main__':
-    main()

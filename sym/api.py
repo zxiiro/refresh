@@ -49,7 +49,6 @@ def init(args, homedir='~'):
     """
     userhome = os.path.expanduser(homedir)
     symconfig = os.path.join(userhome, '.symconfig')
-    cwd = os.getcwd()
     msg = ''
 
     # figure out if the path is absolute or relative or if it doesn't exist
@@ -76,7 +75,7 @@ def init(args, homedir='~'):
     #
     if not os.path.exists(symconfig_basepath):
         config = ConfigYAML()
-        config.save()
+        config.save(homedir=userhome)
         msg += 'Initialized symconfig file at: {}\n'.format(symconfig_basepath)
 
     return 0, msg

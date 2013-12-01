@@ -25,6 +25,7 @@
 import os
 import tempfile
 import unittest
+import shutil
 import yaml
 
 from sym.config import ConfigYAML
@@ -39,6 +40,7 @@ class TestConfig(unittest.TestCase):
 
     def tearDown(self):
         os.remove(self.configpath)
+        shutil.rmtree(self.homedir)
 
     def loadConfig(self, configpath):
         stream = open(configpath, 'r')

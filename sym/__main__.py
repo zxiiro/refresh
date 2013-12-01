@@ -24,4 +24,5 @@
 
 from sym import cli
 
-cli.parse_args()
+parser = cli.setup_parser()
+cli.parse_args(parser)

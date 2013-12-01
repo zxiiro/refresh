@@ -28,45 +28,43 @@ import shutil
 import tempfile
 import unittest
 
-from sym import api
+from sym import cli
 
 
-class TestAPI(unittest.TestCase):
+class TestCLI(unittest.TestCase):
     """Tests the sym API"""
 
     def setUp(self):
-        self.homedir = tempfile.mkdtemp('homedir')
-        self.testrepo = tempfile.mkdtemp('testrepo')
+        self.homedir = tempfile.mkdtemp()
+        self.testrepo = tempfile.mkdtemp()
 
     def tearDown(self):
         shutil.rmtree(self.homedir)
         shutil.rmtree(self.testrepo)
 
-    def test_api_init(self):
-        """Test the init api"""
-        sysconfig_path = os.path.join(self.homedir, '.symconfig')
-        print(self.testrepo, self.homedir)
+    def test_cli_help(self):
+        """Test the CLI help functions"""
+        parser = cli.setup_parser()
+        with self.assertRaises(SystemExit) as cm:
+            parser.parse_known_args(['-h'])
 
-        args = argparse.Namespace(basedir=self.testrepo)
-        api.init(args, self.homedir)
-        self.assertTrue(os.path.lexists(sysconfig_path))
+        parser = cli.setup_parser()
+        with self.assertRaises(SystemExit) as cm:
+            parser.parse_known_args('init -h'.split())
 
-        api.init(args, self.homedir)  # Run a 2nd time to test the existance condition for .symconfig
+        parser = cli.setup_parser()
+        with self.assertRaises(SystemExit) as cm:
+            parser.parse_known_args('add -h'.split())
 
-    def test_api_init_fake_basedir(self):
-        """Test using an non-existant path"""
-        fakepath = 'fakepath'
-        fakeargs = argparse.Namespace(basedir=fakepath)
-        api.init(fakeargs, self.homedir)
-        self.assertFalse(os.path.lexists(fakepath))
+        parser = cli.setup_parser()
+        with self.assertRaises(SystemExit) as cm:
+            parser.parse_known_args('remove -h'.split())
 
-    def test_api_init_relative_basedir(self):
-        """Test relative path basedir"""
-        sysconfig_path = os.path.join(self.homedir, '.symconfig')
+        parser = cli.setup_parser()
+        with self.assertRaises(SystemExit) as cm:
+            parser.parse_known_args('verify -h'.split())
 
-        os.chdir(self.testrepo)
-        reldir = 'test_relative_path'
-        os.makedirs(reldir)
-        relargs = argparse.Namespace(basedir=reldir)
-        api.init(relargs, self.homedir)
-        self.assertTrue(os.path.lexists(sysconfig_path))
+    def test_cli_init(self):
+        """Test initializing a symconfig"""
+        parser = cli.setup_parser()
+        cli.parse_args(parser, ['init', self.testrepo], homedir=self.homedir)
