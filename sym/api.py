@@ -31,7 +31,7 @@
 
 import os
 
-from config import ConfigYAML
+from sym.config import ConfigYAML
 
 
 def init(args, homedir='~'):
