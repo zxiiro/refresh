@@ -43,6 +43,7 @@ def setup_parser_args(parser, subparsers):
 def setup_parser_init(subparsers):
     """Setup the init command parser"""
     parser_init = subparsers.add_parser('init', help='Initialize sym configuration')
+    parser_init.add_argument('basedir', help='The base directory where your configuration git repo lives')
     parser_init.set_defaults(func = init)
 
 
@@ -73,9 +74,9 @@ def parse_args():
     subparsers = parser.add_subparsers(help='Command List')
     setup_parser_args(parser, subparsers)
     args = parser.parse_args()
-    args.func(args)
 
-    print("parse complete")
+    code, msg = args.func(args)
+    print(msg)
 
 
 def main():

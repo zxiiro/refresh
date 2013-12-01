@@ -22,19 +22,38 @@
 #  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import argparse
 import os
-import yaml
+import shutil
+import tempfile
+import unittest
+
+from sym import api
 
 
-class ConfigYAML(yaml.YAMLObject):
-    yaml_tag = u'!SymConfig'
+class TestAPI(unittest.TestCase):
+    """Tests the sym API"""
 
-    def __init__(self):
-        self.symlinks = {}
+    def setUp(self):
+        self.homedir = tempfile.mkdtemp()
+        self.testrepo = tempfile.mkdtemp()
 
-    def save(self, homedir='~'):
-        userhome = os.path.expanduser(homedir)
-        symconfig = os.path.abspath(os.path.join(userhome, '.symconfig'))
-        stream = open(symconfig, 'w')
-        yaml.dump(self, stream)
-        stream.close()
+    def tearDown(self):
+        shutil.rmtree(self.homedir)
+        shutil.rmtree(self.testrepo)
+
+    def test_api_init(self):
+        """Test the init api"""
+        sysconfig_path = os.path.join(self.homedir, '.symconfig')
+
+        args = argparse.Namespace(basedir=self.testrepo)
+        api.init(args, self.homedir)
+        self.assertTrue(os.path.lexists(sysconfig_path))
+
+        api.init(args, self.homedir)  # Run a 2nd time to test the existance condition for .symconfig
+
+        # Test when using an non-existing path
+        fakepath = 'fakepath'
+        fakeargs = argparse.Namespace(basedir=fakepath)
+        api.init(fakeargs, self.homedir)
+        self.assertFalse(os.path.lexists(fakepath))

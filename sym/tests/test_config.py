@@ -35,36 +35,37 @@ class TestConfig(unittest.TestCase):
 
     def setUp(self):
         self.configfile, self.configpath = tempfile.mkstemp()
+        self.homedir = tempfile.mkdtemp()
 
     def tearDown(self):
         os.remove(self.configpath)
 
-    def createConfig(self):
-        stream = open(self.configpath, 'w')
-        config = ConfigYAML()
-        config.symlinks['~/git/dotfiles/testfile'] = '~/.testfile'
-        config.symlinks['~/git/dotfiles/testconfig'] = '~/.testconfig'
-        yaml.dump(config, stream)
-        stream.close()
-
-    def loadConfig(self):
-        stream = open(self.configpath, 'r')
+    def loadConfig(self, configpath):
+        stream = open(configpath, 'r')
         config = yaml.load(stream)
         stream.close()
         return config
 
     def test_create_config(self):
         """Simply test that the config file was created"""
-        self.createConfig()
+        config = ConfigYAML()
+        config.symlinks['~/git/dotfiles/testfile'] = '~/.testfile'
+        config.symlinks['~/git/dotfiles/testconfig'] = '~/.testconfig'
+        config.save(self.homedir)
 
     def test_load_config(self):
         """Simply test that the config file was created"""
-        self.loadConfig()
+        self.loadConfig(self.configpath)
 
     def test_read_symlinks(self):
         """Test reading the symlinks in a config"""
-        self.createConfig()
-        config = self.loadConfig()
+        config = ConfigYAML()
+        config.symlinks['~/git/dotfiles/testfile'] = '~/.testfile'
+        config.symlinks['~/git/dotfiles/testconfig'] = '~/.testconfig'
+        config.save(self.homedir)
+        configpath = os.path.join(self.homedir, '.symconfig')
+        config = self.loadConfig(configpath)
+
         i = 0
         print('')  # Start on a new line
         for symlink in config.symlinks.items():
