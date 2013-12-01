@@ -30,7 +30,8 @@ pep8_options = {'max_line_length': 120,
                 'ignore': ['E127',   # Ignore over indents
                            'E128',   # Ignore under indents
                            'E221',   # Multiple whitespace before operator
-                           'E241']}  # Ignore multiple whitespaces after :
+                           'E241',   # Ignore multiple whitespaces after :
+                           'E902']}  # Workaround for Travis CI throwing this error
 
 
 def pep8_report(test, report):
