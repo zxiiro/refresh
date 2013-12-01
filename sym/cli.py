@@ -44,7 +44,7 @@ def setup_parser_init(subparsers):
     """Setup the init command parser"""
     parser_init = subparsers.add_parser('init', help='Initialize sym configuration')
     parser_init.add_argument('basedir', help='The base directory where your configuration git repo lives')
-    parser_init.set_defaults(func = init)
+    parser_init.set_defaults(func=init)
 
 
 def setup_parser_add(subparsers):
@@ -52,20 +52,20 @@ def setup_parser_add(subparsers):
     parser_add = subparsers.add_parser('add', help='Add dotfile for management')
     parser_add.add_argument('source')
     parser_add.add_argument('destination')
-    parser_add.set_defaults(func = add)
+    parser_add.set_defaults(func=add)
 
 
 def setup_parser_remove(subparsers):
     """Setup the remove command parser"""
     parser_remove = subparsers.add_parser('remove', help='Remove dotfile from management')
     parser_remove.add_argument('symlink')
-    parser_remove.set_defaults(func = remove)
+    parser_remove.set_defaults(func=remove)
 
 
 def setup_parser_verify(subparsers):
     """Setup the verify command parser"""
     parser_verify = subparsers.add_parser('verify', help='Verify dotfiles')
-    parser_verify.set_defaults(func = verify)
+    parser_verify.set_defaults(func=verify)
 
 
 def parse_args():
