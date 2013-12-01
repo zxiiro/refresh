@@ -55,7 +55,7 @@ def init(args, homedir='~'):
     # figure out if the path is absolute or relative or if it doesn't exist
     if os.path.isabs(args.basedir):  # is an absolute path
         symconfig_basepath = os.path.join(args.basedir, 'symconfig')
-    elif os.path.exists(args.basedir):  # is a relative path, covert to absolute path
+    elif os.path.exists(args.basedir):  # is a relative path, convert to absolute path
         symconfig_basepath = os.path.join(os.path.abspath(args.basedir), 'symconfig')
     else:
         msg = 'Failed to initialize symconfig, the path {} is not a valid path.'.format(args.basedir)

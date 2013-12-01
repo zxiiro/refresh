@@ -52,8 +52,20 @@ class TestAPI(unittest.TestCase):
 
         api.init(args, self.homedir)  # Run a 2nd time to test the existance condition for .symconfig
 
-        # Test when using an non-existing path
+    def test_api_init_fake_basedir(self):
+        """Test using an non-existant path"""
         fakepath = 'fakepath'
         fakeargs = argparse.Namespace(basedir=fakepath)
         api.init(fakeargs, self.homedir)
         self.assertFalse(os.path.lexists(fakepath))
+
+    def test_api_init_relative_basedir(self):
+        """Test relative path basedir"""
+        sysconfig_path = os.path.join(self.homedir, '.symconfig')
+
+        os.chdir(self.testrepo)
+        reldir = 'test_relative_path'
+        os.makedirs(reldir)
+        relargs = argparse.Namespace(basedir=reldir)
+        api.init(relargs, self.homedir)
+        self.assertTrue(os.path.lexists(sysconfig_path))
