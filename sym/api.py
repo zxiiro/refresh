@@ -26,7 +26,7 @@
     API Return Codes:
         100 - 199 (init)
             100 - Invalid path
-            101 - Symlink alraedy exists
+            101 - Symlink already exists
 """
 
 import os
