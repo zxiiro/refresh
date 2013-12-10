@@ -90,7 +90,12 @@ def parse_args(parser, parse_args=None, homedir='~'):
             print(e)
 
     elif args.apicall == 'add':
-        pass
+        try:
+            args.func(args, homedir=homedir)
+        except FileExistsError as e:
+            print(e)
+        except FileNotFoundError as e:
+            print(e)
 
     elif args.apicall == 'remove':
         pass

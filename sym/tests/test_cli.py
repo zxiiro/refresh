@@ -68,3 +68,33 @@ class TestCLI(unittest.TestCase):
         """Test initializing a symconfig"""
         parser = cli.setup_parser()
         cli.parse_args(parser, ['init', self.testrepo], homedir=self.homedir)
+
+    def test_cli_add(self):
+        """Test adding symlinks"""
+        parser = cli.setup_parser()
+        cli.parse_args(parser, ['init', self.testrepo], homedir=self.homedir)
+
+        #
+        # Test successfully creating a link
+        #
+        test_path_a = os.path.join(self.testrepo, 'linkme')
+        test_link_a = os.path.join(self.homedir, '.symlink')
+        open(test_path_a, 'a').close()  # create file to link to
+
+        cli.parse_args(parser, ['add', test_path_a, test_link_a], homedir=self.homedir)
+        self.assertTrue(os.path.exists(test_link_a))
+
+        #
+        # Test creating a link to a destination that exists
+        #
+        test_path_b = os.path.join(self.testrepo, 'linkme_2')
+        open(test_path_b, 'a').close()  # create file to link to
+        cli.parse_args(parser, ['add', test_path_b, test_link_a], homedir=self.homedir)
+        self.assertNotEqual(test_path_b, test_link_a)
+
+        #
+        # Test creating a link to a source taht does not exist
+        #
+        test_path_c = os.path.join(self.testrepo, 'linkme_3')
+        cli.parse_args(parser, ['add', test_path_c, test_link_a], homedir=self.homedir)
+        self.assertFalse(os.path.exists(test_path_c))

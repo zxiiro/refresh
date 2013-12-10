@@ -29,6 +29,7 @@ import tempfile
 import unittest
 
 from sym import api
+from sym.config import ConfigYAML
 from sym.exceptions import FileNotFoundError
 from sym.exceptions import FileExistsError
 
@@ -71,3 +72,28 @@ class TestAPI(unittest.TestCase):
         relargs = argparse.Namespace(basedir=reldir)
         api.init(relargs, self.homedir)
         self.assertTrue(os.path.lexists(sysconfig_path))
+
+    ###
+    ### API Helper Functions
+    ###
+    def test_api_helper_get_user_home(self):
+        """Test get_user_home() api"""
+        userhome = api.get_user_home(self.homedir)
+        self.assertEqual(userhome, self.homedir)
+
+    def test_api_helper_get_symconfig_path(self):
+        """Test get_symconfig_path() api"""
+        args = argparse.Namespace(basedir=self.testrepo)
+        api.init(args, self.homedir)
+
+        symconfig = api.get_symconfig_path(self.homedir)
+        symconfig_constructed = os.path.join(self.testrepo, 'symconfig')
+        self.assertEqual(symconfig, symconfig_constructed)
+
+    def test_api_helper_load_config(self):
+        """Test loading_config() api"""
+        args = argparse.Namespace(basedir=self.testrepo)
+        api.init(args, self.homedir)
+        symconfig = api.get_symconfig_path(self.homedir)
+        config = api.load_config(symconfig)
+        self.assertIsInstance(config, ConfigYAML)

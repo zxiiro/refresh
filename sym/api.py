@@ -25,11 +25,16 @@
 
 import os
 
+import yaml
+
 from sym.config import ConfigYAML
 from sym.exceptions import FileExistsError
 from sym.exceptions import FileNotFoundError
 
 
+###
+### API Functions
+###
 def init(args, homedir='~'):
     """Initialize sym configuration
 
@@ -43,7 +48,7 @@ def init(args, homedir='~'):
     Returns:
         An integer representing error code
     """
-    userhome = os.path.expanduser(homedir)
+    userhome = get_user_home(homedir)
     symconfig = os.path.join(userhome, '.symconfig')
     msg = ''
 
@@ -73,8 +78,34 @@ def init(args, homedir='~'):
     return True  # Success
 
 
-def add(args):
-    print('add')
+def add(args, homedir='~'):
+    """Creates a symlink from a source path at a destination
+
+    Creates a symlink, if the symlink already exists and verified pointing to the correct path then simply updates the
+    database to ensure that the symlink is stored.
+
+    Parameters:
+        source      - The path to the source file in which to symlink to
+        destination - The path to the location where to create the symlink
+    """
+    symconfig = get_symconfig_path(homedir)
+    source = os.path.abspath(args.source)
+    destination = os.path.abspath(args.destination)
+
+    if not os.path.exists(source):
+        raise FileNotFoundError('Source path does not exist: {}'.format(source))
+
+    if os.path.lexists(destination):
+        if not os.path.realpath(destination) == source:
+            raise FileExistsError('Destination path exists, cannot create link at: {}'.format(destination))
+        # else: Symlink exists but is already pointing to the correct path
+    else:  # If destination path doesn't exist, proceed with creating the symlink
+        os.symlink(source, destination)
+
+    # Add or Update symlink in symlink database
+    config = load_config(symconfig)
+    config.symlinks[destination] = source
+    config.save()
 
 
 def remove(args):
@@ -83,3 +114,32 @@ def remove(args):
 
 def verify(args):
     print('verify')
+
+
+###
+### Helper functions
+###
+def get_user_home(homedir='~'):
+    """Returns the home directory of the user"""
+    return os.path.expanduser(homedir)
+
+
+def get_symconfig_path(homedir='~'):
+    """Returns the real path to .symconfig"""
+    userhome = get_user_home(homedir)
+    return os.path.realpath(os.path.join(userhome, '.symconfig'))
+
+
+def load_config(symconfig):
+    """Returns the symconfig object (ConfigYAML)
+
+    Parameters:
+        symconfig - The path to symconfig file
+
+    Returns:
+        Object containing symconfig (ConfigYAML)
+    """
+    stream = open(symconfig, 'r')
+    config = yaml.load(stream)
+    stream.close()
+    return config
