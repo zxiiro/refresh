@@ -30,6 +30,8 @@ from sym.api import add
 from sym.api import init
 from sym.api import remove
 from sym.api import verify
+from sym.exceptions import FileExistsError
+from sym.exceptions import FileNotFoundError
 
 
 def setup_parser_args(parser, subparsers):
@@ -71,16 +73,27 @@ def setup_parser_verify(subparsers):
 def setup_parser():
     """Initialize the Argument Parser"""
     parser = argparse.ArgumentParser(description='Sym, dotfiles and configuration management tool')
-    subparsers = parser.add_subparsers(help='Command List')
+    subparsers = parser.add_subparsers(dest='apicall', help='Command List')
     setup_parser_args(parser, subparsers)
     return parser
 
 
-def parse_args(parser, parse_args=None, homedir=None):
+def parse_args(parser, parse_args=None, homedir='~'):
     args = parser.parse_args(parse_args)
 
-    if homedir:
-        code, msg = args.func(args, homedir=homedir)
-    else:
-        code, msg = args.func(args)
-    print(msg)
+    if args.apicall == 'init':
+        try:
+            args.func(args, homedir=homedir)
+        except FileExistsError as e:
+            print(e)
+        except FileNotFoundError as e:
+            print(e)
+
+    elif args.apicall == 'add':
+        pass
+
+    elif args.apicall == 'remove':
+        pass
+
+    elif args.apicall == 'verify':
+        pass

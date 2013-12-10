@@ -22,16 +22,12 @@
 #  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-    API Return Codes:
-        100 - 199 (init)
-            100 - Invalid path
-            101 - Symlink already exists
-"""
 
 import os
 
 from sym.config import ConfigYAML
+from sym.exceptions import FileExistsError
+from sym.exceptions import FileNotFoundError
 
 
 def init(args, homedir='~'):
@@ -57,18 +53,15 @@ def init(args, homedir='~'):
     elif os.path.exists(args.basedir):  # is a relative path, convert to absolute path
         symconfig_basepath = os.path.join(os.path.abspath(args.basedir), 'symconfig')
     else:
-        msg = 'Failed to initialize symconfig, the path {} is not a valid path.'.format(args.basedir)
-        return 100, msg  # Not a valid path, return
+        raise FileNotFoundError('Failed to initialize symconfig, the path {} is not a valid path.'.format(args.basedir))
 
     #
     # Create the symbolic link
     #
     if os.path.lexists(symconfig):
-        msg = 'Symlink for {0} already exists and links to {0}'.format(os.path.realpath(symconfig))
-        return 101, msg
+        raise FileExistsError('Symlink for {0} already exists and links to {0}'.format(os.path.realpath(symconfig)))
     else:
         os.symlink(symconfig_basepath, symconfig)
-        msg += 'Created symlink for symconfig at: {}\n'.format(symconfig_basepath)
 
     #
     # Craete real symconfig file if it doesn't exist in the repo
@@ -76,9 +69,8 @@ def init(args, homedir='~'):
     if not os.path.exists(symconfig_basepath):
         config = ConfigYAML()
         config.save(homedir=userhome)
-        msg += 'Initialized symconfig file at: {}\n'.format(symconfig_basepath)
 
-    return 0, msg
+    return True  # Success
 
 
 def add(args):

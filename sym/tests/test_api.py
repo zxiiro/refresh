@@ -29,6 +29,8 @@ import tempfile
 import unittest
 
 from sym import api
+from sym.exceptions import FileNotFoundError
+from sym.exceptions import FileExistsError
 
 
 class TestAPI(unittest.TestCase):
@@ -51,14 +53,13 @@ class TestAPI(unittest.TestCase):
         api.init(args, self.homedir)
         self.assertTrue(os.path.lexists(sysconfig_path))
 
-        api.init(args, self.homedir)  # Run a 2nd time to test the existance condition for .symconfig
+        self.assertRaises(FileExistsError, api.init, args, self.homedir)  # Run a 2nd time to test existance condition
 
     def test_api_init_fake_basedir(self):
         """Test using an non-existant path"""
         fakepath = 'fakepath'
         fakeargs = argparse.Namespace(basedir=fakepath)
-        api.init(fakeargs, self.homedir)
-        self.assertFalse(os.path.lexists(fakepath))
+        self.assertRaises(FileNotFoundError, api.init, fakeargs, self.homedir)
 
     def test_api_init_relative_basedir(self):
         """Test relative path basedir"""
