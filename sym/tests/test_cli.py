@@ -93,8 +93,33 @@ class TestCLI(unittest.TestCase):
         self.assertNotEqual(test_path_b, test_link_a)
 
         #
-        # Test creating a link to a source taht does not exist
+        # Test creating a link to a source that does not exist
         #
         test_path_c = os.path.join(self.testrepo, 'linkme_3')
         cli.parse_args(parser, ['add', test_path_c, test_link_a], homedir=self.homedir)
         self.assertFalse(os.path.exists(test_path_c))
+
+        #
+        # Test symlinking using absolute paths
+        #
+        tmp_abs_file, tmp_abs_path = tempfile.mkstemp()
+        test_path_d = os.path.join(self.testrepo, 'linkme_abs')
+        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d], homedir=self.homedir)
+        self.assertTrue(os.path.exists(test_path_d))
+
+        #
+        # Test symlinking using relative paths (to homedir)
+        #
+        tmp_abs_file, tmp_abs_path = tempfile.mkstemp(dir=self.homedir)
+        test_path_d = os.path.join(self.homedir, 'linkme_rel')
+        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d], homedir=self.homedir)
+        self.assertTrue(os.path.exists(test_path_d))
+
+        #
+        # Test symlinking using relative paths (to testrepo)
+        #
+        os.chdir(self.testrepo)
+        tmp_abs_file, tmp_abs_path = tempfile.mkstemp(dir=self.testrepo)
+        test_path_d = os.path.join(self.testrepo, 'linkme_rel_testrepo')
+        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d], homedir=self.homedir)
+        self.assertTrue(os.path.exists(test_path_d))

@@ -84,6 +84,12 @@ def add(args, homedir='~'):
     Creates a symlink, if the symlink already exists and verified pointing to the correct path then simply updates the
     database to ensure that the symlink is stored.
 
+    Paths are stored as follows:
+        - If absolute paths are passed, then the absolute paths will be stored in the database.
+        - If a relative path is passed, and if the path is relative to the user's $HOME directory then a path relative
+          to the user's $HOME will be saved instead.
+        - If a relative path is passed that is not within the user's $HOME then the absolute path will be stored.
+
     Parameters:
         source      - The path to the source file in which to symlink to
         destination - The path to the location where to create the symlink
@@ -103,9 +109,22 @@ def add(args, homedir='~'):
         os.symlink(source, destination)
 
     # Add or Update symlink in symlink database
+    # Note: use path relative to $HOME or absolute path if provided by user
+    save_source = source
+    if args.source.startswith('/'):
+        save_source = args.source
+    elif source.startswith(get_user_home(homedir)):
+        save_source = os.path.relpath(source, get_user_home(homedir))
+
+    save_destination = destination
+    if args.destination.startswith('/'):
+        save_destination = args.destination
+    elif args.destination.startswith(get_user_home(homedir)):
+        save_destination = os.path.relpath(destination, get_user_home(homedir))
+
     config = load_config(symconfig)
-    config.symlinks[destination] = source
-    config.save()
+    config.symlinks[save_destination] = save_source
+    config.save(homedir)
 
 
 def remove(args):
