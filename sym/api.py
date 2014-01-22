@@ -50,7 +50,6 @@ def init(args):
     """
     userhome = get_user_home()
     symconfig = os.path.join(userhome, '.symconfig')
-    msg = ''
 
     # figure out if the path is absolute or relative or if it doesn't exist
     if os.path.isabs(args.basedir):  # is an absolute path

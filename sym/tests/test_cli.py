@@ -22,7 +22,6 @@
 #  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import argparse
 import os
 import shutil
 import tempfile
@@ -46,23 +45,23 @@ class TestCLI(unittest.TestCase):
     def test_cli_help(self):
         """Test the CLI help functions"""
         parser = cli.setup_parser()
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit):
             parser.parse_known_args(['-h'])
 
         parser = cli.setup_parser()
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit):
             parser.parse_known_args('init -h'.split())
 
         parser = cli.setup_parser()
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit):
             parser.parse_known_args('add -h'.split())
 
         parser = cli.setup_parser()
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit):
             parser.parse_known_args('remove -h'.split())
 
         parser = cli.setup_parser()
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit):
             parser.parse_known_args('verify -h'.split())
 
     def test_cli_init(self):

@@ -24,7 +24,6 @@
 
 
 import argparse
-import sys
 
 from sym.api import add
 from sym.api import init
