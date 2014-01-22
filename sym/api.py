@@ -35,7 +35,7 @@ from sym.exceptions import FileNotFoundError
 ###
 ### API Functions
 ###
-def init(args, homedir='~'):
+def init(args):
     """Initialize sym configuration
 
     Symlink's the sym configuration file to ~/.symconfig to a directory containing a git repo for management of system
@@ -48,7 +48,7 @@ def init(args, homedir='~'):
     Returns:
         An integer representing error code
     """
-    userhome = get_user_home(homedir)
+    userhome = get_user_home()
     symconfig = os.path.join(userhome, '.symconfig')
     msg = ''
 
@@ -73,12 +73,12 @@ def init(args, homedir='~'):
     #
     if not os.path.exists(symconfig_basepath):
         config = ConfigYAML()
-        config.save(homedir=userhome)
+        config.save()
 
     return True  # Success
 
 
-def add(args, homedir='~'):
+def add(args):
     """Creates a symlink from a source path at a destination
 
     Creates a symlink, if the symlink already exists and verified pointing to the correct path then simply updates the
@@ -94,7 +94,7 @@ def add(args, homedir='~'):
         source      - The path to the source file in which to symlink to
         destination - The path to the location where to create the symlink
     """
-    symconfig = get_symconfig_path(homedir)
+    symconfig = get_symconfig_path()
     source = os.path.abspath(args.source)
     destination = os.path.abspath(args.destination)
 
@@ -113,18 +113,18 @@ def add(args, homedir='~'):
     save_source = source
     if args.source.startswith('/'):
         save_source = args.source
-    elif source.startswith(get_user_home(homedir)):
-        save_source = os.path.relpath(source, get_user_home(homedir))
+    elif source.startswith(get_user_home()):
+        save_source = os.path.relpath(source, get_user_home())
 
     save_destination = destination
     if args.destination.startswith('/'):
         save_destination = args.destination
-    elif args.destination.startswith(get_user_home(homedir)):
-        save_destination = os.path.relpath(destination, get_user_home(homedir))
+    elif args.destination.startswith(get_user_home()):
+        save_destination = os.path.relpath(destination, get_user_home())
 
     config = load_config(symconfig)
     config.symlinks[save_destination] = save_source
-    config.save(homedir)
+    config.save()
 
 
 def remove(args):
@@ -138,14 +138,14 @@ def verify(args):
 ###
 ### Helper functions
 ###
-def get_user_home(homedir='~'):
+def get_user_home():
     """Returns the home directory of the user"""
-    return os.path.expanduser(homedir)
+    return os.path.expanduser(os.environ["HOME"])
 
 
-def get_symconfig_path(homedir='~'):
+def get_symconfig_path():
     """Returns the real path to .symconfig"""
-    userhome = get_user_home(homedir)
+    userhome = get_user_home()
     return os.path.realpath(os.path.join(userhome, '.symconfig'))
 
 

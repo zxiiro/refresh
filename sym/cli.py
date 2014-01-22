@@ -78,12 +78,12 @@ def setup_parser():
     return parser
 
 
-def parse_args(parser, parse_args=None, homedir='~'):
+def parse_args(parser, parse_args=None):
     args = parser.parse_args(parse_args)
 
     if args.apicall == 'init':
         try:
-            args.func(args, homedir=homedir)
+            args.func(args)
         except FileExistsError as e:
             print(e)
         except FileNotFoundError as e:
@@ -91,7 +91,7 @@ def parse_args(parser, parse_args=None, homedir='~'):
 
     elif args.apicall == 'add':
         try:
-            args.func(args, homedir=homedir)
+            args.func(args)
         except FileExistsError as e:
             print(e)
         except FileNotFoundError as e:

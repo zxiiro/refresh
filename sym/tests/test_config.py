@@ -36,7 +36,8 @@ class TestConfig(unittest.TestCase):
 
     def setUp(self):
         self.configfile, self.configpath = tempfile.mkstemp()
-        self.homedir = tempfile.mkdtemp()
+        os.environ["HOME"] = tempfile.mkdtemp('homedir')
+        self.homedir = os.environ["HOME"]
 
     def tearDown(self):
         os.remove(self.configpath)
@@ -53,7 +54,7 @@ class TestConfig(unittest.TestCase):
         config = ConfigYAML()
         config.symlinks['~/git/dotfiles/testfile'] = '~/.testfile'
         config.symlinks['~/git/dotfiles/testconfig'] = '~/.testconfig'
-        config.save(self.homedir)
+        config.save()
 
     def test_load_config(self):
         """Simply test that the config file was created"""
@@ -64,7 +65,7 @@ class TestConfig(unittest.TestCase):
         config = ConfigYAML()
         config.symlinks['~/git/dotfiles/testfile'] = '~/.testfile'
         config.symlinks['~/git/dotfiles/testconfig'] = '~/.testconfig'
-        config.save(self.homedir)
+        config.save()
         configpath = os.path.join(self.homedir, '.symconfig')
         config = self.loadConfig(configpath)
 

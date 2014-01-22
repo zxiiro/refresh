@@ -32,8 +32,8 @@ class ConfigYAML(yaml.YAMLObject):
     def __init__(self):
         self.symlinks = {}
 
-    def save(self, homedir='~'):
-        userhome = os.path.expanduser(homedir)
+    def save(self):
+        userhome = os.environ["HOME"]
         symconfig = os.path.abspath(os.path.join(userhome, '.symconfig'))
         stream = open(symconfig, 'w')
         yaml.dump(self, stream)

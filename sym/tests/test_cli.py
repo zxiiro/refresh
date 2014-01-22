@@ -35,7 +35,8 @@ class TestCLI(unittest.TestCase):
     """Tests the sym API"""
 
     def setUp(self):
-        self.homedir = tempfile.mkdtemp()
+        os.environ["HOME"] = tempfile.mkdtemp('homedir')
+        self.homedir = os.environ["HOME"]
         self.testrepo = tempfile.mkdtemp()
 
     def tearDown(self):
@@ -67,12 +68,12 @@ class TestCLI(unittest.TestCase):
     def test_cli_init(self):
         """Test initializing a symconfig"""
         parser = cli.setup_parser()
-        cli.parse_args(parser, ['init', self.testrepo], homedir=self.homedir)
+        cli.parse_args(parser, ['init', self.testrepo])
 
     def test_cli_add(self):
         """Test adding symlinks"""
         parser = cli.setup_parser()
-        cli.parse_args(parser, ['init', self.testrepo], homedir=self.homedir)
+        cli.parse_args(parser, ['init', self.testrepo])
 
         #
         # Test successfully creating a link
@@ -81,7 +82,7 @@ class TestCLI(unittest.TestCase):
         test_link_a = os.path.join(self.homedir, '.symlink')
         open(test_path_a, 'a').close()  # create file to link to
 
-        cli.parse_args(parser, ['add', test_path_a, test_link_a], homedir=self.homedir)
+        cli.parse_args(parser, ['add', test_path_a, test_link_a])
         self.assertTrue(os.path.exists(test_link_a))
 
         #
@@ -89,14 +90,14 @@ class TestCLI(unittest.TestCase):
         #
         test_path_b = os.path.join(self.testrepo, 'linkme_2')
         open(test_path_b, 'a').close()  # create file to link to
-        cli.parse_args(parser, ['add', test_path_b, test_link_a], homedir=self.homedir)
+        cli.parse_args(parser, ['add', test_path_b, test_link_a])
         self.assertNotEqual(test_path_b, test_link_a)
 
         #
         # Test creating a link to a source that does not exist
         #
         test_path_c = os.path.join(self.testrepo, 'linkme_3')
-        cli.parse_args(parser, ['add', test_path_c, test_link_a], homedir=self.homedir)
+        cli.parse_args(parser, ['add', test_path_c, test_link_a])
         self.assertFalse(os.path.exists(test_path_c))
 
         #
@@ -104,7 +105,7 @@ class TestCLI(unittest.TestCase):
         #
         tmp_abs_file, tmp_abs_path = tempfile.mkstemp()
         test_path_d = os.path.join(self.testrepo, 'linkme_abs')
-        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d], homedir=self.homedir)
+        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d])
         self.assertTrue(os.path.exists(test_path_d))
 
         #
@@ -112,7 +113,7 @@ class TestCLI(unittest.TestCase):
         #
         tmp_abs_file, tmp_abs_path = tempfile.mkstemp(dir=self.homedir)
         test_path_d = os.path.join(self.homedir, 'linkme_rel')
-        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d], homedir=self.homedir)
+        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d])
         self.assertTrue(os.path.exists(test_path_d))
 
         #
@@ -121,5 +122,5 @@ class TestCLI(unittest.TestCase):
         os.chdir(self.testrepo)
         tmp_abs_file, tmp_abs_path = tempfile.mkstemp(dir=self.testrepo)
         test_path_d = os.path.join(self.testrepo, 'linkme_rel_testrepo')
-        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d], homedir=self.homedir)
+        cli.parse_args(parser, ['add', tmp_abs_path, test_path_d])
         self.assertTrue(os.path.exists(test_path_d))

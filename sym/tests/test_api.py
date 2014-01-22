@@ -38,7 +38,8 @@ class TestAPI(unittest.TestCase):
     """Tests the sym API"""
 
     def setUp(self):
-        self.homedir = tempfile.mkdtemp('homedir')
+        os.environ["HOME"] = tempfile.mkdtemp('homedir')
+        self.homedir = os.environ["HOME"]
         self.testrepo = tempfile.mkdtemp('testrepo')
 
     def tearDown(self):
@@ -48,19 +49,18 @@ class TestAPI(unittest.TestCase):
     def test_api_init(self):
         """Test the init api"""
         sysconfig_path = os.path.join(self.homedir, '.symconfig')
-        print(self.testrepo, self.homedir)
 
         args = argparse.Namespace(basedir=self.testrepo)
-        api.init(args, self.homedir)
+        api.init(args)
         self.assertTrue(os.path.lexists(sysconfig_path))
 
-        self.assertRaises(FileExistsError, api.init, args, self.homedir)  # Run a 2nd time to test existance condition
+        self.assertRaises(FileExistsError, api.init, args)  # Run a 2nd time to test existance condition
 
     def test_api_init_fake_basedir(self):
         """Test using an non-existant path"""
         fakepath = 'fakepath'
         fakeargs = argparse.Namespace(basedir=fakepath)
-        self.assertRaises(FileNotFoundError, api.init, fakeargs, self.homedir)
+        self.assertRaises(FileNotFoundError, api.init, fakeargs)
 
     def test_api_init_relative_basedir(self):
         """Test relative path basedir"""
@@ -70,7 +70,7 @@ class TestAPI(unittest.TestCase):
         reldir = 'test_relative_path'
         os.makedirs(reldir)
         relargs = argparse.Namespace(basedir=reldir)
-        api.init(relargs, self.homedir)
+        api.init(relargs)
         self.assertTrue(os.path.lexists(sysconfig_path))
 
     ###
@@ -78,22 +78,22 @@ class TestAPI(unittest.TestCase):
     ###
     def test_api_helper_get_user_home(self):
         """Test get_user_home() api"""
-        userhome = api.get_user_home(self.homedir)
+        userhome = api.get_user_home()
         self.assertEqual(userhome, self.homedir)
 
     def test_api_helper_get_symconfig_path(self):
         """Test get_symconfig_path() api"""
         args = argparse.Namespace(basedir=self.testrepo)
-        api.init(args, self.homedir)
+        api.init(args)
 
-        symconfig = api.get_symconfig_path(self.homedir)
+        symconfig = api.get_symconfig_path()
         symconfig_constructed = os.path.join(self.testrepo, 'symconfig')
         self.assertEqual(symconfig, symconfig_constructed)
 
     def test_api_helper_load_config(self):
         """Test loading_config() api"""
         args = argparse.Namespace(basedir=self.testrepo)
-        api.init(args, self.homedir)
-        symconfig = api.get_symconfig_path(self.homedir)
+        api.init(args)
+        symconfig = api.get_symconfig_path()
         config = api.load_config(symconfig)
         self.assertIsInstance(config, ConfigYAML)
